@@ -1,7 +1,9 @@
 import java.io.DataInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.io.DataOutputStream;
 
 public class Server {
     public static void main(String[] args) throws Exception{
@@ -10,18 +12,24 @@ public class Server {
         Socket s = serverSocket.accept();
 
         DataInputStream din = new DataInputStream(s.getInputStream());
+        DataOutputStream dout = new DataOutputStream(s.getOutputStream());
+
         String str;
+
         do {
             str = (String) din.readUTF();
 
-            if(str.toLowerCase().equals("hi")) {
-                System.out.println("Hello!");
-            } else if(str.toLowerCase().equals("time")) {
-                System.out.println(LocalDate.now());
-            } else if(str.toLowerCase().equals("quit")){
-                System.out.println("Quitting ...!");
+            if(str.equalsIgnoreCase("hi")) {
+                dout.writeUTF("Hello!");
+            } else if(str.equalsIgnoreCase("time")) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH.mm");
+                LocalTime timeNow = LocalTime.now();
+                String timeString = timeNow.format(formatter);
+                dout.writeUTF(timeString);
+            } else if(str.equalsIgnoreCase("quit")){
+                dout.writeUTF("Quitting...");
             } else {
-                System.out.println("Unknown!");
+                dout.writeUTF("Unknown!");
             }
         } while(!str.equals("quit"));
 
