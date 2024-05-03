@@ -18,7 +18,7 @@ public class Server {
 
         do {
             str = (String) din.readUTF();
-
+            System.out.println(str); // printing client message on the server-end
             if(str.equalsIgnoreCase("hi")) {
                 dout.writeUTF("Hello!");
             } else if(str.equalsIgnoreCase("time")) {
